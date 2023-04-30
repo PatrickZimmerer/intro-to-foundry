@@ -26,9 +26,25 @@ contract ContractTest is DSTest {
         loaner = new Flashloaner(address(token));
 
         token.mint(address(this), 1 ether);
+
+        token.approve(address(loaner), 100);
+        loaner.depositTokens(100);
     }
 
-    function testExample() public {
-        assertTrue(true);
+    function test_ConstructNonZeroTokenRevert() public {
+        vm.expectRevert(Flashloaner.TokenAddressCannotBeZero.selector);
+        new Flashloaner(address(0x0));
+    }
+
+    function test_DepositZeroTokenRevert() public {
+        vm.expectRevert(Flashloaner.MustDepositOneTokenMinimum.selector);
+        loaner.depositTokens(0);
+    }
+
+    function test_poolBalance() public {
+        token.approve(address(loaner), 1);
+        loaner.depositTokens(1);
+        assertEq(loaner.poolBalance(), 101);
+        assertEq(token.balanceOf(address(loaner)), loaner.poolBalance());
     }
 }
