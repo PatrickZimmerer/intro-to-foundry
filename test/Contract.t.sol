@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.12;
+pragma solidity 0.8.19;
 
 import "ds-test/test.sol";
 import "forge-std/Vm.sol";
@@ -112,6 +112,12 @@ contract ContractTest is DSTest, TokenReturner {
         vm.assume(borrow_amount <= token.balanceOf(address(loaner)));
         return_amount = _return_amount;
         loaner.flashLoan(borrow_amount);
+        assertEq(token.balanceOf(address(loaner)), loaner.poolBalance());
+    }
+
+    function test_BrokenFlashloan() public {
+        return_amount = 2;
+        loaner.flashLoan(1);
         assertEq(token.balanceOf(address(loaner)), loaner.poolBalance());
     }
 }
