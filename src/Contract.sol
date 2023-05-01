@@ -12,13 +12,6 @@ contract Flashloaner is ReentrancyGuard {
     ERC20 public immutable damnValuableToken;
     uint256 public poolBalance;
 
-    address owner;
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "not owner");
-        _;
-    }
-
     error TokenAddressCannotBeZero();
     error MustDepositOneTokenMinimum();
     error MustBorrowOneTokenMinimum();
@@ -56,10 +49,6 @@ contract Flashloaner is ReentrancyGuard {
 
         if (balanceAfter < balanceBefore) revert FlashLoanHasNotBeenPaidBack();
         poolBalance = balanceAfter;
-    }
-
-    function updateOwner(address newOwner) public onlyOwner {
-        owner = newOwner;
     }
 
     function echoSender() public view returns (address) {
